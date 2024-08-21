@@ -8,6 +8,7 @@
         <groupId>com.nsn.cumulocity.clients-java</groupId>
         <artifactId>clients-java</artifactId>
         <version>${revision}${changelist}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>com.cumulocity.sdk.mqtt</groupId>
