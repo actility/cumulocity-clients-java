@@ -26,6 +26,11 @@ public class CumulocityHttpClient extends JerseyClient {
         super(clientConfig, (UnsafeValue<SSLContext, IllegalStateException>) null,null);
     }
 
+    CumulocityHttpClient(ClientConfig clientConfig, SSLContext sslContext) {
+        super(clientConfig, sslContext, null);
+    }
+
+
     @Override
     public JerseyWebTarget target(String path) {
         JerseyWebTarget resource;

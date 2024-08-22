@@ -28,6 +28,7 @@ import com.cumulocity.sdk.client.interceptor.HttpClientInterceptor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.net.ssl.SSLContext;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -45,6 +46,9 @@ public class PlatformParameters implements AutoCloseable {
     private String host;
 
     private String proxyHost;
+
+    @Getter
+    private SSLContext customSSLContext;
 
     @Getter
     private CumulocityCredentials cumulocityCredentials;
@@ -92,8 +96,13 @@ public class PlatformParameters implements AutoCloseable {
     }
 
     public PlatformParameters(String host, CumulocityCredentials credentials, ClientConfiguration clientConfiguration) {
-        this(host, credentials, clientConfiguration, DEFAULT_PAGE_SIZE);
+        this(host, credentials, clientConfiguration, null, DEFAULT_PAGE_SIZE);
     }
+
+    public PlatformParameters(String host, CumulocityCredentials credentials, ClientConfiguration clientConfiguration, SSLContext sslContext) {
+        this(host, credentials, clientConfiguration, sslContext, DEFAULT_PAGE_SIZE);
+    }
+
 
     private void setMandatoryFields(String host, CumulocityCredentials credentials) {
         if (host.charAt(host.length() - 1) != '/') {
@@ -103,9 +112,10 @@ public class PlatformParameters implements AutoCloseable {
         this.cumulocityCredentials = credentials;
     }
 
-    public PlatformParameters(String host, CumulocityCredentials credentials, ClientConfiguration clientConfiguration, int pageSize) {
+    public PlatformParameters(String host, CumulocityCredentials credentials, ClientConfiguration clientConfiguration, SSLContext sslContext, int pageSize) {
         this.pageSize = pageSize;
         this.clientConfiguration = clientConfiguration;
+        this.customSSLContext = sslContext;
         setMandatoryFields(host, credentials);
     }
 

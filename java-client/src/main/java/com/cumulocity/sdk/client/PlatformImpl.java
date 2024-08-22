@@ -53,6 +53,8 @@ import com.cumulocity.sdk.client.option.TenantOptionApiImpl;
 import com.cumulocity.sdk.client.user.UserApi;
 import com.cumulocity.sdk.client.user.UserApiImpl;
 
+import javax.net.ssl.SSLContext;
+
 public class PlatformImpl extends PlatformParameters implements Platform {
 
     private static final String PLATFORM_URL = "platform";
@@ -87,6 +89,11 @@ public class PlatformImpl extends PlatformParameters implements Platform {
         super(host, credentials, new ClientConfiguration());
     }
 
+    public PlatformImpl(String host, CumulocityCredentials credentials, SSLContext sslContext) {
+        super(host, credentials, new ClientConfiguration(), sslContext);
+    }
+
+
     public PlatformImpl(String host, CumulocityCredentials credentials, ClientConfiguration clientConfiguration) {
         super(host, credentials, clientConfiguration);
     }
@@ -96,16 +103,29 @@ public class PlatformImpl extends PlatformParameters implements Platform {
     }
 
     public PlatformImpl(String host, CumulocityCredentials credentials, int pageSize) {
-        super(host, credentials, new ClientConfiguration(), pageSize);
+        super(host, credentials, new ClientConfiguration(), null, pageSize);
+    }
+
+    public PlatformImpl(String host, CumulocityCredentials credentials, SSLContext sslContext, int pageSize) {
+        super(host, credentials, new ClientConfiguration(), sslContext, pageSize);
     }
 
     public PlatformImpl(String host, CumulocityCredentials credentials, ClientConfiguration clientConfiguration, int pageSize) {
-        super(host, credentials, clientConfiguration, pageSize);
+        super(host, credentials, clientConfiguration, null, pageSize);
+    }
+
+    public PlatformImpl(String host, CumulocityCredentials credentials, ClientConfiguration clientConfiguration, SSLContext sslContext, int pageSize) {
+        super(host, credentials, clientConfiguration, sslContext, pageSize);
     }
 
     public PlatformImpl(String host, int port, CumulocityCredentials credentials, int pageSize) {
-        super(getHostUrl(host, port), credentials, new ClientConfiguration(), pageSize);
+        super(getHostUrl(host, port), credentials, new ClientConfiguration(), null, pageSize);
     }
+
+    public PlatformImpl(String host, int port, CumulocityCredentials credentials, SSLContext sslContext, int pageSize) {
+        super(getHostUrl(host, port), credentials, new ClientConfiguration(), sslContext, pageSize);
+    }
+
 
     @Deprecated
     public PlatformImpl(String host, String tenantId, String user, String password, String applicationKey) {
@@ -128,7 +148,7 @@ public class PlatformImpl extends PlatformParameters implements Platform {
                         .password(password)
                         .applicationKey(applicationKey)
                         .build(),
-                new ClientConfiguration(), pageSize);
+                new ClientConfiguration(), null, pageSize);
     }
 
     public PlatformImpl() {

@@ -449,7 +449,7 @@ public class RestConnector implements RestOperations {
         config.property(ApacheClientProperties.REQUEST_CONFIG, createRequestConfig(platformParameters));
 
 
-        CumulocityHttpClient client = new CumulocityHttpClient(config);
+        CumulocityHttpClient client = new CumulocityHttpClient(config, platformParameters.getCustomSSLContext());
         client.setPlatformParameters(platformParameters);
 
         return client;
