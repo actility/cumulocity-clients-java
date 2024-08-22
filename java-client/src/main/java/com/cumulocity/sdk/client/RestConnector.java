@@ -33,7 +33,10 @@ import com.cumulocity.sdk.client.rest.providers.CumulocityJSONMessageBodyReader;
 import com.cumulocity.sdk.client.rest.providers.CumulocityJSONMessageBodyWriter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.glassfish.jersey.apache.connector.ApacheClientProperties;
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
@@ -456,9 +459,16 @@ public class RestConnector implements RestOperations {
     }
 
     private static HttpClientConnectionManager createConnectionManager(PlatformParameters platformParameters) {
-        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+        PoolingHttpClientConnectionManager connectionManager = null;
+        if(platformParameters.getCustomSSLContext() != null) {
+            SSLConnectionSocketFactory sslConnectionSocketFactory = new SSLConnectionSocketFactory(platformParameters.getCustomSSLContext());
+            RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder.create();
+            registryBuilder.register("https", sslConnectionSocketFactory);
+            connectionManager = new PoolingHttpClientConnectionManager(registryBuilder.build());
+        } else {
+            connectionManager = new PoolingHttpClientConnectionManager();
+        }
         ConnectionPoolConfig pool = platformParameters.getHttpClientConfig().getPool();
-
         if (pool.isEnabled()) {
             connectionManager.setMaxTotal(pool.getMax());
             connectionManager.setDefaultMaxPerRoute(pool.getPerHost());
